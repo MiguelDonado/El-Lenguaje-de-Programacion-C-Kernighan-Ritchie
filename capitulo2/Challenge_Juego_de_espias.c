@@ -4,11 +4,13 @@
 */
 
 #include <stdio.h>
+#include <ctype.h>
 #define MAXLINE 1000
 
 char ask_encode_decode();
 int number_of_positions();
 void get_message(char s[], int lim);
+void encode(char after[], char before[], int key);
 
 int main(){
     char operation; // Variable to store the type of operation (encode or decode)
@@ -40,6 +42,9 @@ int main(){
         printf("o You've selected the next key to encode your message: %d\n", key);
         get_message(message_before, MAXLINE);
         printf("###############\no A key of %d positions is being used to encode the following message:\n%s", key, message_before);
+        encode(message_after, message_before, key);
+        printf("o Your encoded message:\n###############\n%s", message_after);
+        printf("\n###############\n");
     }
 
     //if the user has selected to decode
@@ -59,7 +64,7 @@ char ask_encode_decode(){
 
     printf("? Do you want to encode or decode a message [e/d]: ");
     
-    while ((c=getchar())!='\n' && c!=EOF){
+    while ((c=tolower(getchar()))!='\n' && c!=EOF){
         // Ignore spaces
         if (c==' ')
             continue;
@@ -91,7 +96,7 @@ int number_of_positions(){
     key = 0;
     sign = 1;
 
-    printf("? What is the key (number of positions)? [-26 to 26 excluding 0]: ");
+    printf("? What is the key (number of positions)? [-25 to 25 excluding 0]: ");
 
     // Skip leading spaces
     while ((c=getchar())==' ');
@@ -111,8 +116,8 @@ int number_of_positions(){
     key*=sign;
 
     // Check if the key is within the valid range
-    if (key < -26 || key > 26 || key == 0){
-        printf("Invalid key. Please enter a number between -26 and 26, excluding 0.\n");
+    if (key < -25 || key > 25 || key == 0){
+        printf("Invalid key. Please enter a number between -25 and 25, excluding 0.\n");
         return 0;  //Return 0 to indicate an error
     }
 
@@ -126,8 +131,27 @@ void get_message(char s[], int lim){
 
     for (i = 0; (i<lim-1) && ((c=getchar())!=EOF); i++)
     {
-        s[i] = c;
+        s[i] = tolower(c);
     }
     s[i]='\0';
+}
+
+void encode(char after[], char before[], int key){
+    int i, c;
+
+    i=0;
+    while ((c=before[i])!='\0'){
+        if (c=='\n'){
+            after[i]=c;
+        }
+        else if (c+key>'z'){
+            after[i]=c+key-26;
+        }
+        else if(c+key<'a'){
+            after[i]=c+key+26;
+        }
+        i++;
+    }
+    
 }
 
