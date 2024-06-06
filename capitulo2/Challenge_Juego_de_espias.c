@@ -5,16 +5,20 @@
 
 #include <stdio.h>
 char ask_encode_decode();
-
+int number_of_positions();
 
 void main(){
     char operation;
-    
+    int key;
+
     operation = ask_encode_decode();
     if (operation == 'x')
         printf("Invalid input. Please enter only 'e' or 'd'.\n");
     else
         printf("You've chosen '%c'.\n", operation);
+        key = number_of_positions();
+        if (key)
+            printf("You've selected the next key: %d\n", key);
 }
 
 
@@ -50,4 +54,38 @@ char ask_encode_decode(){
         return 'x';
     else
         return choice;
+}
+
+int number_of_positions(){
+    int key,c,sign;
+
+    key = 0;
+    sign = 1;
+
+    printf("What is the key (number of positions)? [-26 to 26 excluding 0]: ");
+
+    // Skip leading spaces
+    while ((c=getchar())==' ');
+
+    // Handle the negative sign
+    if (c=='-'){
+        sign = -1;
+        c = getchar();
+    }
+
+    // Read the number
+    while ((c>='0' && c<='9')){
+        key = key * 10 + (c - '0');
+        c=getchar();
+    }
+
+    key*=sign;
+
+    // Check if the key is within the valid range
+    if (key < -26 || key > 26 || key == 0){
+        printf("Invalid key. Please enter a number between -26 and 26, excluding 0.\n");
+        return 0;  //Return 0 to indicate an error
+    }
+
+    return key; // Return the key on success
 }
