@@ -7,10 +7,11 @@
 #include <ctype.h>
 #define MAXLINE 1000
 
-char ask_encode_decode();
-int number_of_positions();
-void get_message(char s[], int lim);
-void encode(char after[], char before[], int key);
+char ask_encode_decode(); // Function to ask the user if he wants to encode or decode a message
+int number_of_positions(); // Function to know the number of positions the user want as the key to encode/decode
+void get_message(char s[], int lim); // Function to get the message the user wants to encode/decode
+void encode(char after[], char before[], int key); //Function to encode the message
+void decode(char after[], char before[], int key); //Function to decode the message
 
 int main(){
     char operation; // Variable to store the type of operation (encode or decode)
@@ -38,7 +39,7 @@ int main(){
     }
 
     // if the user has selected to encode
-    if (operation='e'){
+    if (operation=='e'){
         printf("o You've selected the next key to encode your message: %d\n", key);
         get_message(message_before, MAXLINE);
         printf("###############\no A key of %d positions is being used to encode the following message:\n%s", key, message_before);
@@ -48,10 +49,13 @@ int main(){
     }
 
     //if the user has selected to decode
-    else if (operation='d'){
+    else if (operation=='d'){
         printf("o You've selected the next key to decode your message: %d\n", key);
         get_message(message_before, MAXLINE);
-        printf("###############\no A key of %d positions is being used to encode the following message:\n%s", key, message_before);
+        printf("###############\no A key of %d positions is being used to decode the following message:\n%s", key, message_before);
+        decode(message_after, message_before, key);
+        printf("o Your decoded message:\n###############\n%s", message_after);
+        printf("\n###############\n");
     }
 }
 
@@ -140,8 +144,10 @@ void encode(char after[], char before[], int key){
     int i, c;
 
     i=0;
+
+    // Till the end of the message check certain conditions to encode the message
     while ((c=before[i])!='\0'){
-        if (c=='\n'){
+        if (c=='\n'||c==' '){
             after[i]=c;
         }
         else if (c+key>'z'){
@@ -150,8 +156,36 @@ void encode(char after[], char before[], int key){
         else if(c+key<'a'){
             after[i]=c+key+26;
         }
+        else{
+            after[i]=c+key;
+        }
         i++;
     }
+}
+void decode(char after[], char before[], int key){
+    int i, c;
     
+
+    // Because it is used to decode, t is the opposite way.
+    key*=-1;
+    i=0;
+
+    // Till the end of the message check certain conditions to decode the message
+    while ((c=before[i])!='\0'){
+        if (c=='\n'||c==' '){
+            after[i]=c;
+        }
+        else if (c+key>'z'){
+            after[i]=c+key-26;
+        }
+        else if(c+key<'a'){
+            after[i]=c+key+26;
+        }
+        else{
+            after[i]=c+key;
+        }
+        i++;
+    }
+
 }
 
